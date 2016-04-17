@@ -2,7 +2,8 @@ from django.conf import settings
 
 if 'request.tracking' in settings.INSTALLED_APPS:
     DEFAULT_PLUGINS = (
-        'request.plugins.TrafficInformation',
+        'request.plugins.LatestRequests',
+        'request.tracking.plugins.VisitorTrafficInformation',
         'request.plugins.LatestRequests',
         'request.plugins.TopPaths',
         'request.plugins.TopErrorPaths',
