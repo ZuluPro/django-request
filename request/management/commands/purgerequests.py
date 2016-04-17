@@ -4,6 +4,9 @@ from datetime import timedelta
 from dateutil.relativedelta import relativedelta
 from django.core.management.base import BaseCommand, CommandError
 from django.utils import six, timezone
+from django.db.models import Q
+
+from request import settings
 from request.models import Request
 
 DURATION_OPTIONS = {
@@ -33,21 +36,36 @@ class Command(BaseCommand):
             default=True,
             help='Tells Django to NOT prompt the user for input of any kind.'
         )
+        parser.add_argument(
+            '--ignored',
+            action='store_true',
+            dest='ignored',
+            default=False,
+            help='Delete only ignored requests'
+        )
 
     def handle(self, *args, **options):
-        amount = options['amount']
-        duration = options['duration']
-
-        # Check we have the correct values
-        if duration[-1] != 's':  # If its not plural, make it plural
-            duration_plural = '{0}s'.format(duration)
+        if options['ignored']:
+            Request.objects.filter(
+                Q(user__username__in=settings.REQUEST_IGNORE_USERNAME) |
+                Q(path__in=settings.REQUEST_IGNORE_USERNAME) |
+                Q(user_agent__in=settings.REQUEST_IGNORE_USER_AGENTS) |
+                Q(method__not_in=settings.REQUEST_VALID_METHOD_NAMES)
+            )
         else:
-            duration_plural = duration
+            amount = options['amount']
+            duration = options['duration']
 
-        if duration_plural not in DURATION_OPTIONS:
-            raise CommandError('Amount must be {0}'.format(', '.join(DURATION_OPTIONS)))
+            # Check we have the correct values
+            if duration[-1] != 's':  # If its not plural, make it plural
+                duration_plural = '{0}s'.format(duration)
+            else:
+                duration_plural = duration
 
-        qs = Request.objects.filter(time__lte=DURATION_OPTIONS[duration_plural](amount))
+            if duration_plural not in DURATION_OPTIONS:
+                raise CommandError('Amount must be {0}'.format(', '.join(DURATION_OPTIONS)))
+
+            qs = Request.objects.filter(time__lte=DURATION_OPTIONS[duration_plural](amount))
         count = qs.count()
 
         if count == 0:
