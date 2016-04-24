@@ -2,7 +2,6 @@ from django.conf import settings
 
 if 'request.tracking' in settings.INSTALLED_APPS:
     DEFAULT_PLUGINS = (
-        'request.plugins.LatestRequests',
         'request.tracking.plugins.VisitorTrafficInformation',
         'request.plugins.LatestRequests',
         'request.plugins.TopPaths',
@@ -11,6 +10,14 @@ if 'request.tracking' in settings.INSTALLED_APPS:
         'request.plugins.TopSearchPhrases',
         'request.plugins.TopBrowsers',
         'request.tracking.plugins.ActiveVisitors',
+    )
+    DEFAULT_TRAFFIC_MODULES = (
+        'request.tracking.traffic.UniqueVisitor',
+        'request.tracking.traffic.UniqueVisit',
+        'request.traffic.Hit',
+        'request.tracking.traffic.NewVisitor',
+        'request.tracking.traffic.Singleton',
+        'request.tracking.traffic.RepeatedVisitor',
     )
 else:
     DEFAULT_PLUGINS = (
@@ -22,7 +29,13 @@ else:
         'request.plugins.TopSearchPhrases',
         'request.plugins.TopBrowsers',
     )
+    DEFAULT_TRAFFIC_MODULES = (
+        'request.traffic.UniqueVisitor',
+        'request.traffic.UniqueVisit',
+        'request.traffic.Hit',
+    )
 REQUEST_PLUGINS = getattr(settings, 'REQUEST_PLUGINS', DEFAULT_PLUGINS)
+REQUEST_TRAFFIC_MODULES = getattr(settings, 'REQUEST_TRAFFIC_MODULES', DEFAULT_TRAFFIC_MODULES)
 
 REQUEST_VALID_METHOD_NAMES = getattr(settings, 'REQUEST_VALID_METHOD_NAMES', ('get', 'post', 'put', 'delete', 'head', 'options', 'trace'))
 
@@ -36,12 +49,6 @@ REQUEST_LOG_USER = getattr(settings, 'REQUEST_LOG_USER', True)
 REQUEST_IGNORE_USERNAME = getattr(settings, 'REQUEST_IGNORE_USERNAME', tuple())
 REQUEST_IGNORE_PATHS = getattr(settings, 'REQUEST_IGNORE_PATHS', tuple())
 REQUEST_IGNORE_USER_AGENTS = getattr(settings, 'REQUEST_IGNORE_USER_AGENTS', tuple())
-
-REQUEST_TRAFFIC_MODULES = getattr(settings, 'REQUEST_TRAFFIC_MODULES', (
-    'request.traffic.UniqueVisitor',
-    'request.traffic.UniqueVisit',
-    'request.traffic.Hit',
-))
 
 try:
     from django.http import HttpRequest

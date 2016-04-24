@@ -1,0 +1,63 @@
+{% extends "request/plugins/table.html" %}
+{% load i18n %}
+
+{% block table %}
+    <tr>
+        <td>&nbsp;</td>
+        <th>{% trans "Today" %}</th>
+        <th>{% trans "This week" %}</th>
+        <th>{% trans "This month" %}</th>
+        <th>{% trans "This year" %}</th>
+        <th>{% trans "Alltime" %}</th>
+    </tr>
+    
+    <tr>
+       <th>{% trans "Unique visitor" %}</th>
+       <td>{{ visitors.today.count }}</td>
+       <td>{{ visitors.this_week.count }}</td>
+       <td>{{ visitors.this_month.count }}</td>
+       <td>{{ visitors.this_year.count }}</td>
+       <td>{{ visitors.count }}</td>
+    </tr>
+    <tr>
+       <th>{% trans "Unique visits" %}</th>
+       <td>{{ visits.today.count }}</td>
+       <td>{{ visits.this_week.count }}</td>
+       <td>{{ visits.this_month.count }}</td>
+       <td>{{ visits.this_year.count }}</td>
+       <td>{{ visits.count }}</td>
+    </tr>
+    <tr>
+       <th>{% trans "Hits" %}</th>
+       <td>{{ requests.today.count }}</td>
+       <td>{{ requests.this_week.count }}</td>
+       <td>{{ requests.this_month.count }}</td>
+       <td>{{ requests.this_year.count }}</td>
+       <td>{{ requests.count }}</td>
+    </tr>
+
+    <tr>
+       <th>{% trans "New visitors" %}</th>
+       <td>{{ visitors.today.new.count }}</td>
+       <td>{{ visitors.this_week.new.count }}</td>
+       <td>{{ visitors.this_month.new.count }}</td>
+       <td>{{ visitors.this_year.new.count }}</td>
+       <td>{{ visitors.new.count }}</td>
+    </tr>
+    <tr>
+       <th>{% trans "Repeat visitors" %}</th>
+       <td>{{ visitors.today.repeated.count }}</td>
+       <td>{{ visitors.this_week.repeated.count }}</td>
+       <td>{{ visitors.this_month.repeated.count }}</td>
+       <td>{{ visitors.this_year.repeated.count }}</td>
+       <td>{{ visitors.repeated.count }}</td>
+    </tr>
+    <tr>
+       <th>{% trans "Singletons" %}</th>
+       <td>{{ visits.today.singleton.count }}</td>
+       <td>{{ visits.this_week.singleton.count }}</td>
+       <td>{{ visits.this_month.singleton.count }}</td>
+       <td>{{ visits.this_year.singleton.count }}</td>
+       <td>{{ visits.singleton.count }}</td>
+    </tr>
+{% endblock %}
