@@ -1,13 +1,15 @@
-# -*- coding: utf-8 -*-
 from socket import gethostbyaddr
+from datetime import timedelta
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import models
-from django.utils import timezone
+from django.utils.timezone import now
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
-from request import settings as request_settings
+from django.contrib.sessions.backends.db import SessionStore
+
+from request import settings
 from request.managers import RequestManager
 from request.utils import HTTP_STATUS_CODES, browsers, engines
 
@@ -22,7 +24,7 @@ class Request(models.Model):
     # Request infomation
     method = models.CharField(_('method'), default='GET', max_length=7)
     path = models.CharField(_('path'), max_length=255)
-    time = models.DateTimeField(_('time'), default=timezone.now, db_index=True)
+    time = models.DateTimeField(_('time'), default=now, db_index=True)
 
     is_secure = models.BooleanField(_('is secure'), default=False)
     is_ajax = models.BooleanField(
@@ -49,8 +51,25 @@ class Request(models.Model):
     def __str__(self):
         return '[%s] %s %s %s' % (self.time, self.method, self.path, self.response)
 
+    def get_absolute_url(self):
+        from django.core.urlresolvers import reverse
+        return reverse('admin:request_request_change', args=(self.id,))
+
     def get_user(self):
         return get_user_model().objects.get(pk=self.user_id)
+
+    def _get_last_visit(self, visitor):
+        from request.tracking.models import Visit
+        timeout = now() - timedelta(**settings.VISIT_TIMEOUT)
+        visits = Visit.objects.filter(visitor=visitor,
+                                      last_time__gte=timeout)
+        if visits.exists():
+            visit = visits[0]
+            visit.last_time = now()
+            visit.save()
+        else:
+            visit = Visit.objects.create(visitor=visitor)
+        return visit
 
     def from_http_request(self, request, response=None, commit=True):
         # Request infomation
@@ -79,6 +98,22 @@ class Request(models.Model):
         if commit:
             self.save()
 
+        if settings.USE_TRACKING and response and commit:
+            from request.tracking.models import Visitor
+            if 'track_key' in request.COOKIES:
+                track_key = request.COOKIES['track_key']
+            else:
+                if hasattr(request, 'session'):
+                    track_key = request.session._get_or_create_session_key()
+                else:
+                    track_key = SessionStore()._get_new_session_key()
+                response.cookies['track_key'] = track_key
+
+            visitor, created = Visitor.objects.get_or_create(key=track_key)
+            visitor.requests.add(self)
+            visit = self._get_last_visit(visitor)
+            visit.requests.add(self)
+
     @property
     def browser(self):
         if not self.user_agent:
@@ -106,13 +141,13 @@ class Request(models.Model):
             return self.ip
 
     def save(self, *args, **kwargs):
-        if not request_settings.REQUEST_LOG_IP:
-            self.ip = request_settings.REQUEST_IP_DUMMY
-        elif request_settings.REQUEST_ANONYMOUS_IP:
+        if not settings.REQUEST_LOG_IP:
+            self.ip = settings.REQUEST_IP_DUMMY
+        elif settings.REQUEST_ANONYMOUS_IP:
             parts = self.ip.split('.')[0:-1]
             parts.append('1')
             self.ip = '.'.join(parts)
-        if not request_settings.REQUEST_LOG_USER:
+        if not settings.REQUEST_LOG_USER:
             self.user = None
 
         super(Request, self).save(*args, **kwargs)

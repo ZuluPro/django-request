@@ -15,6 +15,7 @@ class VisitorQuerySetTest(TestCase):
         self.assertEqual(0, Visitor.objects.all().repeated().count())
         # 2nd visit
         Request.objects.update(time=now()-timedelta(days=1))
+        Visit.objects.update(last_time=now()-timedelta(days=1))
         self.client.get('/admin/login/')
         self.assertEqual(1, Visitor.objects.all().repeated().count())
 

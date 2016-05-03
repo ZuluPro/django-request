@@ -1,0 +1,20 @@
+{% load i18n %}
+
+<div class="form-row">
+ <h3>
+  {% if visit.get_absolute_url == original.get_absolute_url %}
+   {{ visit.first_time }}
+  {% else %}
+   <a href="{{ visit.get_absolute_url }}">{{ visit.first_time }}</a>
+  {% endif %}
+ </h3>
+ {% if visit.requests.last.referer %}
+  <p>{% trans "From" %} {{ visit.requests.last.referer }}</p>
+ {% endif %}
+ {% for request in visit.requests.all.reverse %}
+  <p>
+   {{ forloop.counter }}. <a href="{{ request.get_absolute_url }}">{{ request.path }}<a/>
+   {% if request.is_ajax %}<small>(AJAX)</small>{% endif %}
+  </p>
+ {% endfor %}
+</div>

@@ -53,6 +53,7 @@ class VisitorRecordTest(TestCase):
         self.assertEqual(1, Visit.objects.count())
         # Change request to older time
         Request.objects.update(time=now()-timedelta(days=1))
+        Visit.objects.update(last_time=now()-timedelta(days=1))
         response = self.client.get('/admin/login/')
         self.assertEqual(1, Visitor.objects.count())
         self.assertEqual(2, Visit.objects.count())

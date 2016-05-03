@@ -4,6 +4,7 @@ if 'request.tracking' in settings.INSTALLED_APPS:
     DEFAULT_PLUGINS = (
         'request.tracking.plugins.VisitorTrafficInformation',
         'request.plugins.LatestRequests',
+        'request.tracking.plugins.LatestVisits',
         'request.plugins.TopPaths',
         'request.plugins.TopErrorPaths',
         'request.plugins.TopReferrers',

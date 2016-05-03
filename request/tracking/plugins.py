@@ -4,7 +4,6 @@ from request.models import Request
 from request.plugins import set_count, Plugin
 from request.tracking.models import Visitor, Visit
 from request import settings
-from request.traffic import modules
 
 
 class ActiveVisitors(Plugin):
@@ -24,3 +23,8 @@ class VisitorTrafficInformation(Plugin):
             'visits': Visit.objects.all(),
             'requests': Request.objects.all(),
         }
+
+
+class LatestVisits(Plugin):
+    def template_context(self):
+        return {'visits': Visit.objects.order_by('-last_time')[:5]}

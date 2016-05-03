@@ -1,0 +1,48 @@
+{% extends "admin/change_form.html" %}
+{% load i18n static %}
+
+{% block after_field_sets %}
+<fieldset class="module aligned">
+ <h2>{% trans "Details" %}</h2>
+ <div class="form-row">
+  <div class="field-box">
+   <label>{% trans "Hits:" %}</label>
+   <p>{{ original.requests.count }}</p>
+  </div>
+  <div class="field-box">
+   <label>{% trans "IPs:" %}</label>
+   {% for ip in original.ips %}
+   <p>{{ ip }}</p>
+   {% endfor %}
+  </div>
+  <div class="field-box">
+   <label>{% trans "Browsers:" %}</label>
+   <p>{{ original.browser }} <small>{{ original.user_agent }}</small></p>
+  </div>
+  <div class="field-box">
+   <label>{% trans "In progress:" %}</label>
+   <p>
+    {% if original.in_progress %}
+      <img src="{% static "admin/img/icon-yes.gif" %}" alt="True">
+    {% else %}
+      <img src="{% static "admin/img/icon-no.gif" %}" alt="False">
+    {% endif %}
+  </div>
+ </div>
+</fieldset>
+
+<fieldset class="module">
+ <h2>{% trans "Visits" %}</h2>
+ <div class="form-row">
+   {% for visit in original.visit_set.all %}
+    {% include "request/tracking/_path.html" %}
+   {% endfor %}
+ </div>
+</fieldset>
+{% endblock %}
+
+{% block submit_buttons_bottom %}
+<div class="submit-row"><a>
+  </a><p class="deletelink-box"><a></a><a href="{{ original.get_delete_url }}" class="deletelink">Delete</a></p>
+</div>
+{% endblock %}

@@ -8,7 +8,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.utils.translation import ugettext_lazy as _
 from request.models import Request
-from request.plugins import *
+from request.plugins import plugins
 from request.traffic import modules
 
 
@@ -16,7 +16,10 @@ class RequestAdmin(admin.ModelAdmin):
     list_display = ('time', 'path', 'response', 'method', 'request_from')
     fieldsets = (
         (_('Request'), {
-            'fields': ('method', 'path', 'time', 'is_secure', 'is_ajax')
+            'fields': (
+                ('method', 'path', 'time'),
+                ('is_secure', 'is_ajax'),
+            )
         }),
         (_('Response'), {
             'fields': ('response',)
@@ -26,7 +29,9 @@ class RequestAdmin(admin.ModelAdmin):
         })
     )
     raw_id_fields = ('user',)
-    readonly_fields = ('time',)
+    readonly_fields = ('method', 'path', 'time', 'is_secure', 'is_ajax',
+                       'response',  'referer', 'user_agent', 'ip', 'user',
+                       'language')
 
     def lookup_allowed(self, key, value):
         return key == 'user__username' or super(RequestAdmin, self).lookup_allowed(key, value)

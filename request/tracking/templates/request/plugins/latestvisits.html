@@ -1,0 +1,19 @@
+{% extends "request/plugins/table.html" %}
+{% load i18n %}
+{% load request_admin %}
+
+{% block table %}
+    <tr>
+        <th>{% trans "Hits" %}</th>
+        <th>{% trans "Duration" %}</th>
+        <th>{% trans "From" %}</th>
+    </tr>
+    
+  {% for visit in visits %}
+    <tr>
+        <td>{{ visit.requests.count }}</td>
+        <td>{{ visit.first_time|timesince:visit.last_time }}</td>
+        <td>{{ visit.ip }}</td>
+    </tr>
+  {% endfor %}
+{% endblock %}

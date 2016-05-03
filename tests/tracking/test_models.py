@@ -12,32 +12,23 @@ class VisitorModelTest(TestCase):
         visitor = Visitor.objects.create(key='foo')
         visitor.__str__()
 
-    def test_no_first_time(self):
-        visitor = Visitor.objects.create(key='foo')
-        self.assertIsNone(visitor.first_time())
-
     def test_first_time(self):
         self.client.get('/admin/login/')
-        request = Request.objects.first()
         visitor = Visitor.objects.first()
-        self.assertEqual(request.time, visitor.first_time())
+        first_time = visitor.first_time
         # 2nd request
         self.client.get('/admin/login/')
-        self.assertEqual(request.time, visitor.first_time())
-
-    def test_no_last_time(self):
-        visitor = Visitor.objects.create(key='foo')
-        self.assertIsNone(visitor.first_time())
+        visitor = Visitor.objects.first()
+        self.assertEqual(first_time, visitor.first_time)
 
     def test_last_time(self):
         self.client.get('/admin/login/')
-        request = Request.objects.first()
         visitor = Visitor.objects.first()
-        self.assertEqual(request.time, visitor.last_time())
+        last_time = visitor.last_time
         # 2nd request
         self.client.get('/admin/login/')
-        request = Request.objects.order_by('-time').first()
-        self.assertEqual(request.time, visitor.last_time())
+        visitor = Visitor.objects.first()
+        self.assertLess(last_time, visitor.last_time)
 
     def test_recency(self):
         self.skipTest("Not implemented")
@@ -56,32 +47,23 @@ class VisitModelTest(TestCase):
         visit = Visit.objects.create(visitor=Visitor.objects.create(key='foo'))
         visit.__str__()
 
-    def test_no_first_time(self):
-        visit = Visit.objects.create(visitor=Visitor.objects.create(key='foo'))
-        self.assertIsNone(visit.first_time())
-
     def test_first_time(self):
         self.client.get('/admin/login/')
-        request = Request.objects.first()
         visit = Visit.objects.first()
-        self.assertEqual(request.time, visit.first_time())
+        first_time = visit.first_time
         # 2nd request
         self.client.get('/admin/login/')
-        self.assertEqual(request.time, visit.first_time())
-
-    def test_no_last_time(self):
-        visit = Visit.objects.create(visitor=Visitor.objects.create(key='foo'))
-        self.assertIsNone(visit.last_time())
+        visit = Visit.objects.first()
+        self.assertEqual(first_time, visit.first_time)
 
     def test_last_time(self):
         self.client.get('/admin/login/')
-        request = Request.objects.first()
         visit = Visit.objects.first()
-        self.assertEqual(request.time, visit.last_time())
+        last_time = visit.last_time
         # 2nd request
         self.client.get('/admin/login/')
-        request = Request.objects.order_by('-time').first()
-        self.assertEqual(request.time, visit.last_time())
+        visit = Visit.objects.first()
+        self.assertLess(last_time, visit.last_time)
 
     def test_in_progress(self):
         self.client.get('/admin/login/')
