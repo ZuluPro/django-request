@@ -106,8 +106,6 @@ class RequestAdmin(admin.ModelAdmin):
         from_time = float(request.GET.get('from', to_time-3600*24))
         from_ = datetime.fromtimestamp(from_time)
         to = datetime.fromtimestamp(to_time)
-        print from_time, to_time
-        print from_, to
         data = Request.objects.filter(time__gte=from_, time__lte=to)\
             .count_by_country()
         return HttpResponse(json.dumps(data), content_type='text/javascript')

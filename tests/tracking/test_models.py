@@ -33,6 +33,18 @@ class VisitorModelTest(TestCase):
     def test_recency(self):
         self.skipTest("Not implemented")
 
+    def test_ips(self):
+        self.client.get('/admin/login/')
+        ips = Visitor.objects.first().ips
+        self.assertIn('127.0.0.1', ips)
+        # Change IP
+        Request.objects.update(ip='127.0.0.2')
+        self.client.get('/admin/login/')
+        ips = Visitor.objects.first().ips
+        self.assertIn('127.0.0.1', ips)
+        self.assertIn('127.0.0.2', ips)
+        self.assertEqual(2, len(ips))
+
     def test_in_progress(self):
         self.client.get('/admin/login/')
         visitor = Visitor.objects.first()
@@ -40,6 +52,16 @@ class VisitorModelTest(TestCase):
         # Change request time and test
         Request.objects.update(time=now()-timedelta(days=1))
         self.assertFalse(visitor.in_progress())
+
+    def test_get_absolute_url(self):
+        self.client.get('/admin/login/')
+        url = Visitor.objects.first().get_absolute_url()
+        self.assertEqual(url, '/admin/tracking/visitor/1/')
+
+    def test_get_delete_url(self):
+        self.client.get('/admin/login/')
+        url = Visitor.objects.first().get_delete_url()
+        self.assertEqual(url, '/admin/tracking/visitor/1/delete/')
 
 
 class VisitModelTest(TestCase):
@@ -72,3 +94,23 @@ class VisitModelTest(TestCase):
         # Change request time and test
         Request.objects.update(time=now()-timedelta(days=1))
         self.assertFalse(visit.in_progress())
+
+    def test_get_absolute_url(self):
+        self.client.get('/admin/login/')
+        url = Visit.objects.first().get_absolute_url()
+        self.assertEqual(url, '/admin/tracking/visit/1/')
+
+    def test_get_delete_url(self):
+        self.client.get('/admin/login/')
+        url = Visit.objects.first().get_delete_url()
+        self.assertEqual(url, '/admin/tracking/visit/1/delete/')
+
+    def test_ip(self):
+        self.client.get('/admin/login/')
+        ip = Visit.objects.first().ip
+        self.assertEqual(ip, '127.0.0.1')
+
+    def test_user_agent(self):
+        self.client.get('/admin/login/')
+        user_agent = Visit.objects.first().user_agent
+        self.assertEqual(user_agent, '')
