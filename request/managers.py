@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 import datetime
 import time
+from collections import Counter
 
 from django.db import models
+from django.contrib.gis.geoip import GeoIP
 
 try:  # For python <= 2.3
     set()
@@ -90,6 +92,16 @@ class RequestQuerySet(models.query.QuerySet):
 
     def search(self):
         return self.filter(referer__contains='google') | self.filter(referer__contains='yahoo') | self.filter(referer__contains='bing')
+
+    def count_by_country(self):
+        geoip = GeoIP()
+        count = Counter()
+        for request in self.all():
+            if request.ip is None or geoip.country_code(request.ip) is None:
+                continue
+            country = geoip.country(request.ip)
+            count[country['country_code']] += 1
+        return count
 
 
 class RequestManager(models.Manager):

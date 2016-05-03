@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
+from time import time
 from functools import update_wrapper
 
 from django.contrib import admin
@@ -66,6 +67,7 @@ class RequestAdmin(admin.ModelAdmin):
         return [
             url(r'^overview/$', wrap(self.overview), name='%s_%s_overview' % info),
             url(r'^overview/traffic.json$', wrap(self.traffic), name='%s_%s_traffic' % info),
+            url(r'^overview/geo.json$', wrap(self.geo), name='%s_%s_geo' % info),
         ] + super(RequestAdmin, self).get_urls()
 
     def overview(self, request):
@@ -98,5 +100,16 @@ class RequestAdmin(admin.ModelAdmin):
         days = [date.today() - timedelta(day) for day in range(0, days_count, days_step)]
         days_qs = [(day, Request.objects.day(date=day)) for day in days]
         return HttpResponse(json.dumps(modules.graph(days_qs)), content_type='text/javascript')
+
+    def geo(self, request):
+        to_time = float(request.GET.get('to', time()))
+        from_time = float(request.GET.get('from', to_time-3600*24))
+        from_ = datetime.fromtimestamp(from_time)
+        to = datetime.fromtimestamp(to_time)
+        print from_time, to_time
+        print from_, to
+        data = Request.objects.filter(time__gte=from_, time__lte=to)\
+            .count_by_country()
+        return HttpResponse(json.dumps(data), content_type='text/javascript')
 
 admin.site.register(Request, RequestAdmin)

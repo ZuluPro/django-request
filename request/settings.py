@@ -60,3 +60,5 @@ except:
 
 USE_TRACKING = 'request.tracking' in settings.INSTALLED_APPS
 VISIT_TIMEOUT = getattr(settings, 'REQUEST_VISIT_TIMEOUT', {'minutes': 30})
+
+GEOIP_PATH = getattr(settings, 'GEOIP_PATH', None)
