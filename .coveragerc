@@ -32,6 +32,3 @@ exclude_lines =
     in_development_warning
 
 ignore_errors = True
-
-[html]
-directory = coverage_html_report

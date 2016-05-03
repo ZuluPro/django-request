@@ -5,3 +5,7 @@ docs/_build/
 build/
 dist/
 *.sw[pon]
+.tox
+htmlcov/
+*.mo
+.coverage
