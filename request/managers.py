@@ -4,7 +4,10 @@ import time
 from collections import Counter
 
 from django.db import models
-from django.contrib.gis.geoip import GeoIP
+try:
+    from django.contrib.gis.geoip2 import GeoIP2 as GeoIP
+except ImportError:
+    from django.contrib.gis.geoip import GeoIP
 
 try:  # For python <= 2.3
     set()

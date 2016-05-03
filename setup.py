@@ -1,41 +1,35 @@
 #!/usr/bin/env python
+from setuptools import setup, find_packages
 import request
-from setuptools import setup
+
+
+def read_file(name):
+    with open(name) as fd:
+        return fd.read()
 
 setup(
-    name='django-request',
+    name='pony-traffic',
     version=request.__version__,
-    description='django-request is a statistics module for django. It stores requests in a database for admins to see, it can also be used to get statistics on who is online etc.',
-    long_description="""
-    django-request is a statistics module for django. It stores requests in a database for admins to see, it can also be used to get statistics on who is online etc.
-
-    .. image:: https://github.com/kylef/django-request/raw/master/docs/graph.png
-
-    As well as a site statistics module, with the active_users template tag and manager method you can also use django-request to show who is online in a certain time.
-    """,
-    author='Kyle Fuller',
-    author_email='kyle@fuller.li',
-    url=request.__URL__,
-    download_url='http://github.com/kylef/django-request/archive/%s.zip' % request.__version__,
-    packages=['request', 'request.migrations', 'request.templatetags', 'request.management', 'request.management.commands'],
-    package_data={'request': [
-        'templates/admin/request/*.html',
-        'templates/admin/request/request/*.html',
-        'templates/request/plugins/*.html',
-        'static/request/js/*.js',
-    ]},
-    install_requires=[
-        'django',
-        'python-dateutil',
-    ],
+    description=request.__doc__,
+    long_description=read_file('README.md'),
+    author=request.__author__,
+    author_email=request.__email__,
+    url=request.__url__,
+    download_url=request.__download__,
+    include_package_data=True,
+    packages=find_packages(exclude=['tests']),
+    install_requires=read_file('requirements.txt'),
     license=request.__licence__,
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Environment :: Web Environment',
         'Framework :: Django',
+        'Natural Language :: English',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 3',
     ]
 )

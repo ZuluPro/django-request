@@ -1,3 +1,3 @@
 include README.md
-recursive-include request/media *
-recursive-include request/templates *
+include requirements.txt
+recursive-include request * *.js *.html *.po
