@@ -2,6 +2,7 @@ from datetime import timedelta
 
 from django.test import TestCase
 from django.utils.timezone import now
+from django.core.urlresolvers import reverse
 
 from request.models import Request
 from request.tracking.models import Visit, Visitor
@@ -55,8 +56,10 @@ class VisitorModelTest(TestCase):
 
     def test_get_absolute_url(self):
         self.client.get('/admin/login/')
-        url = Visitor.objects.first().get_absolute_url()
-        self.assertEqual(url, '/admin/tracking/visitor/1/')
+        visitor = Visitor.objects.first()
+        url = visitor.get_absolute_url()
+        wanted_url = reverse('admin:tracking_visitor_change', args=(visitor.id,))
+        self.assertEqual(url, wanted_url)
 
     def test_get_delete_url(self):
         self.client.get('/admin/login/')
@@ -97,8 +100,10 @@ class VisitModelTest(TestCase):
 
     def test_get_absolute_url(self):
         self.client.get('/admin/login/')
-        url = Visit.objects.first().get_absolute_url()
-        self.assertEqual(url, '/admin/tracking/visit/1/')
+        visit = Visit.objects.first()
+        url = visit.get_absolute_url()
+        wanted_url = reverse('admin:tracking_visit_change', args=(visit.id,))
+        self.assertEqual(url, wanted_url)
 
     def test_get_delete_url(self):
         self.client.get('/admin/login/')

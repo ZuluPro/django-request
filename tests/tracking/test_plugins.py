@@ -1,8 +1,5 @@
-from datetime import timedelta
 from django.test import TestCase
-from django.utils.timezone import now
 from request.tracking import plugins
-from request.tracking.models import Visit
 
 
 class ActiveVisitorTest(TestCase):

@@ -1,7 +1,11 @@
-# -*- coding: utf-8 -*-
-import mock
+try:
+    from unittest import mock
+except ImportError:
+    import mock
+
 from django.core import exceptions
 from django.test import TestCase
+
 from request import plugins
 from request.models import Request
 

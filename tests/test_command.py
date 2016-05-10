@@ -1,7 +1,9 @@
-# -*- coding: utf-8 -*-
 import os
 from datetime import timedelta
-import mock
+try:
+    from unittest import mock
+except ImportError:
+    import mock
 
 from django.core.management.base import CommandError
 from django.test import TestCase

@@ -1,11 +1,14 @@
-# -*- coding: utf-8 -*-
 import socket
 from datetime import datetime
+try:
+    from unittest import mock
+except ImportError:
+    import mock
 
-import mock
 from django.contrib.auth import get_user_model
 from django.http import HttpRequest, HttpResponse
 from django.test import TestCase
+
 from request import settings
 from request.models import Request
 
