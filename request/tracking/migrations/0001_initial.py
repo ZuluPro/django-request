@@ -7,7 +7,7 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('request', '0003_auto_20160331_1430'),
+        ('request', '0004_alter_time_timezone_default'),
     ]
 
     operations = [
@@ -15,6 +15,8 @@ class Migration(migrations.Migration):
             name='Visit',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('first_time', models.DateTimeField(auto_now_add=True, db_index=True)),
+                ('last_time', models.DateTimeField(auto_now=True, db_index=True)),
                 ('requests', models.ManyToManyField(to='request.Request')),
             ],
             options={
@@ -27,7 +29,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('key', models.CharField(max_length=100)),
-                ('requests', models.ManyToManyField(to='request.Request')),
+                ('first_time', models.DateTimeField(auto_now_add=True, db_index=True)),
             ],
             options={
                 'verbose_name': 'visitor',

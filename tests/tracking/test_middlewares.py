@@ -30,7 +30,6 @@ class VisitorRecordTest(TestCase):
         self.assertEqual(1, Visitor.objects.count())
         self.assertEqual(1, Visit.objects.count())
         request = Request.objects.get()
-        self.assertEqual(1, request.visitor_set.count())
         self.assertEqual(1, request.visit_set.count())
 
     def test_client_drop_cookie(self):

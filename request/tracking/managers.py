@@ -7,7 +7,7 @@ from request import settings
 
 class VisitorQuerySet(models.query.QuerySet):
     def year(self, year):
-        return self.filter(requests__time__year=year).distinct()
+        return self.filter(visit__requests__time__year=year).distinct()
 
     def month(self, year=None, month=None, month_format='%b', date=None):
         if not date:
@@ -27,8 +27,8 @@ class VisitorQuerySet(models.query.QuerySet):
             last_day = first_day.replace(month=first_day.month + 1)
 
         lookup_kwargs = {
-            'requests__time__gte': first_day,
-            'requests__time__lt': last_day,
+            'visit__requests__time__gte': first_day,
+            'visit__requests__time__lt': last_day,
         }
 
         return self.filter(**lookup_kwargs).distinct()
@@ -43,8 +43,8 @@ class VisitorQuerySet(models.query.QuerySet):
         first_day = date
         last_day = date + timedelta(days=7)
         lookup_kwargs = {
-            'requests__time__gte': first_day,
-            'requests__time__lt': last_day,
+            'visit__requests__time__gte': first_day,
+            'visit__requests__time__lt': last_day,
         }
 
         return self.filter(**lookup_kwargs).distinct()
@@ -59,7 +59,7 @@ class VisitorQuerySet(models.query.QuerySet):
             except ValueError:
                 return
 
-        return self.filter(requests__time__range=(datetime.combine(date, time.min), datetime.combine(date, time.max))).distinct()
+        return self.filter(visit__requests__time__range=(datetime.combine(date, time.min), datetime.combine(date, time.max))).distinct()
 
     def today(self):
         return self.day(date=Date.today())
@@ -87,7 +87,7 @@ class VisitorQuerySet(models.query.QuerySet):
     def in_progress(self):
         """Filter that is currently visiting."""
         timeout = now() - timedelta(**settings.VISIT_TIMEOUT)
-        return self.filter(requests__time__gte=timeout).distinct()
+        return self.filter(visit__requests__time__gte=timeout).distinct()
 
 
 class VisitorManager(models.Manager):

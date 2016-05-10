@@ -110,7 +110,6 @@ class Request(models.Model):
                 response.cookies['track_key'] = track_key
 
             visitor, created = Visitor.objects.get_or_create(key=track_key)
-            visitor.requests.add(self)
             visit = self._get_last_visit(visitor)
             visit.requests.add(self)
 

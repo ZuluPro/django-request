@@ -10,7 +10,6 @@ from request.tracking.managers import VisitorManager, VisitManager
 class Visitor(models.Model):
     key = models.CharField(max_length=100)
     first_time = models.DateTimeField(auto_now_add=True, db_index=True)
-    requests = models.ManyToManyField(Request)
 
     objects = VisitorManager()
 
@@ -29,6 +28,12 @@ class Visitor(models.Model):
     def get_delete_url(self):
         from django.core.urlresolvers import reverse
         return reverse('admin:tracking_visitor_delete', args=(self.id,))
+
+    @property
+    def requests(self):
+        ids = Visit.objects.filter(visitor=self)\
+            .values_list('requests', flat=True)
+        return Request.objects.filter(id__in=ids)
 
     def hits(self):
         return self.requests.count()

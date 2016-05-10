@@ -16,7 +16,7 @@ class UniqueVisitor(Module):
     verbose_name_plural = _('Unique Visitor')
 
     def count(self, qs):
-        return Visitor.objects.filter(requests__in=qs).count()
+        return Visitor.objects.filter(visit__requests__in=qs).count()
 
 
 class NewVisitor(Module):
@@ -24,7 +24,7 @@ class NewVisitor(Module):
     verbose_name_plural = _('New visitors')
 
     def count(self, qs):
-        return Visitor.objects.filter(requests__in=qs).new().count()
+        return Visitor.objects.filter(visit__requests__in=qs).new().count()
 
 
 class Singleton(Module):
@@ -40,4 +40,4 @@ class RepeatedVisitor(Module):
     verbose_name_plural = _('Repeated visitors')
 
     def count(self, qs):
-        return Visitor.objects.filter(requests__in=qs).repeated().count()
+        return Visitor.objects.filter(visit__requests__in=qs).repeated().count()
