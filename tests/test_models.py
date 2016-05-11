@@ -73,7 +73,7 @@ class RequestTests(TestCase):
 
     def test_browser_detection_with_no_ua(self):
         request = Request(method='GET', path='/', response=200)
-        self.assertEqual(request.browser, None)
+        self.assertEqual(request.browser, 'Other')
 
     def test_browser_detection_with_no_path(self):
         request = Request(user_agent='Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:43.0) Gecko/20100101 Firefox/43.0')

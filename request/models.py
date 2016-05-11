@@ -1,7 +1,8 @@
 from socket import gethostbyaddr
 from datetime import timedelta
 
-from django.conf import settings
+from user_agents import parse as ua_parse
+
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils.timezone import now
@@ -11,7 +12,7 @@ from django.contrib.sessions.backends.db import SessionStore
 
 from request import settings
 from request.managers import RequestManager
-from request.utils import HTTP_STATUS_CODES, browsers, engines
+from request.utils import HTTP_STATUS_CODES, engines
 
 AUTH_USER_MODEL = getattr(settings, 'AUTH_USER_MODEL', 'auth.User')
 
@@ -37,7 +38,7 @@ class Request(models.Model):
     ip = models.GenericIPAddressField(_('ip address'))
     user = models.ForeignKey(AUTH_USER_MODEL, blank=True, null=True, verbose_name=_('user'))
     referer = models.URLField(_('referer'), max_length=255, blank=True, null=True)
-    user_agent = models.CharField(_('user agent'), max_length=255, blank=True, null=True)
+    user_agent = models.CharField(_('user agent'), max_length=255, blank=True, null=True, default='')
     language = models.CharField(_('language'), max_length=255, blank=True, null=True)
 
     objects = RequestManager()
@@ -114,13 +115,22 @@ class Request(models.Model):
             visit.requests.add(self)
 
     @property
-    def browser(self):
-        if not self.user_agent:
-            return
+    def ua(self):
+        if not hasattr(self, '_ua'):
+            self._ua = ua_parse(self.user_agent)
+        return self._ua
 
-        if not hasattr(self, '_browser'):
-            self._browser = browsers.resolve(self.user_agent)
-        return self._browser[0]
+    @property
+    def browser(self):
+        return self.ua.browser.family
+
+    @property
+    def os(self):
+        return self.ua.os.family
+
+    @property
+    def device(self):
+        return self.ua.device.family
 
     @property
     def keywords(self):
