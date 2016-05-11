@@ -1,5 +1,5 @@
 """pony-traffic is a fork of django-request with tracking module. It stores requests in a database for admins to see, it can also be used to get statistics on who is online, where are clients, how much time they spent, etc."""
-VERSION = (1, 0, 0)
+VERSION = (1, 0, 1)
 __version__ = '.'.join([str(i) for i in VERSION])
 __copyright__ = 'Copyright (c) 2016, Anthony Monthe'
 __licence__ = 'BSD'
