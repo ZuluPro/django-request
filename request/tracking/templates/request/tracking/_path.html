@@ -13,8 +13,9 @@
  {% endif %}
  {% for request in visit.requests.all.reverse %}
   <p>
-   {{ forloop.counter }}. <a href="{{ request.get_absolute_url }}">{{ request.path }}<a/>
+   {{ forloop.counter }}. <a href="{{ request.get_absolute_url }}">{{ request.method }} {{ request.path }}<a/>
    {% if request.is_ajax %}<small>(AJAX)</small>{% endif %}
+   {{ request.response }}
   </p>
  {% endfor %}
 </div>

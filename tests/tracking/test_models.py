@@ -117,5 +117,5 @@ class VisitModelTest(TestCase):
 
     def test_user_agent(self):
         self.client.get('/admin/login/')
-        user_agent = Visit.objects.first().user_agent
-        self.assertEqual(user_agent, '')
+        user_agent = Visit.objects.first().browser
+        self.assertEqual(user_agent, 'Other')

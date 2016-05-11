@@ -26,7 +26,7 @@ class VisitAdmin(admin.ModelAdmin):
     readonly_fields = ('visitor',)
 
     date_hierarchy = 'first_time'
-    list_display = ('visitor', 'hits', 'first_time', 'last_time')
+    list_display = ('visitor', 'hits', 'first_time', 'last_time', 'browser', 'os', 'device')
     list_filter = ('first_time',)
 
     def lookup_allowed(self, key, value):

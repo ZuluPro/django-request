@@ -1,3 +1,5 @@
+from user_agents import parse as ua_parse
+
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import python_2_unicode_compatible
@@ -91,8 +93,22 @@ class Visit(models.Model):
         return self.requests.first().ip
 
     @property
-    def user_agent(self):
-        return self.requests.first().user_agent
+    def ua(self):
+        if not hasattr(self, '_ua'):
+            self._ua = ua_parse(self.requests.first().user_agent)
+        return self._ua
+
+    @property
+    def browser(self):
+        return self.ua.browser.family
+
+    @property
+    def os(self):
+        return self.ua.os.family
+
+    @property
+    def device(self):
+        return self.ua.device.family
 
     def hits(self):
         return self.requests.count()
