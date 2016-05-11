@@ -11,7 +11,7 @@ setup(
     name='pony-traffic',
     version=request.__version__,
     description=request.__doc__,
-    long_description=read_file('README.md'),
+    long_description=read_file('README.rst'),
     author=request.__author__,
     author_email=request.__email__,
     url=request.__url__,
