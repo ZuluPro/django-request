@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from request.tracking.models import Visitor, Visit
+from request.tracking.admin import filters
 
 
 class VisitorAdmin(admin.ModelAdmin):
@@ -13,12 +14,12 @@ class VisitorAdmin(admin.ModelAdmin):
 
     date_hierarchy = 'first_time'
     list_display = ('key', 'hit_count', 'visit_count', 'first_time', 'last_time')
-    list_filter = ('first_time',)
+    list_filter = ('first_time', filters.VisitorHitsListFilter, filters.VisitorVisitsListFilter)
 
     def get_queryset(self, request):
         qs = super(VisitorAdmin, self).get_queryset(request)
         qs = qs.annotate(models.Count('visit__requests'),
-                         models.Count('visit'),
+                         models.Count('visit', distinct=True),
                          models.Max('visit__requests__time'))
         return qs
 
@@ -51,7 +52,7 @@ class VisitAdmin(admin.ModelAdmin):
 
     date_hierarchy = 'first_time'
     list_display = ('visitor', 'hit_count', 'first_time', 'last_time', 'browser', 'os', 'device')
-    list_filter = ('first_time',)
+    list_filter = ('first_time', filters.VisitHitsListFilter)
 
     def get_queryset(self, request):
         qs = super(VisitAdmin, self).get_queryset(request)
